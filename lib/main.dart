@@ -57,6 +57,13 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a `GlobalKey<FormState>`,
+  // not a GlobalKey<SignUpFormState>.
+  final _formKey = GlobalKey<FormState>();
+
   final _firstNameTextController = TextEditingController();
   final _lastNameTextController = TextEditingController();
   final _usernameTextController = TextEditingController();
@@ -89,6 +96,8 @@ class _SignUpFormState extends State<SignUpForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      // Build a Form widget using the _formKey created above.
+      key: _formKey,
       onChanged: _updateFormProgress, // NEW
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -98,6 +107,13 @@ class _SignUpFormState extends State<SignUpForm> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextFormField(
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your first name';
+                }
+                return null;
+              },
               controller: _firstNameTextController,
               decoration: const InputDecoration(hintText: 'First name'),
             ),
@@ -137,7 +153,8 @@ class _SignUpFormState extends State<SignUpForm> {
 class AnimatedProgressIndicator extends StatefulWidget {
   final double value;
 
-  const AnimatedProgressIndicator({super.key, 
+  const AnimatedProgressIndicator({
+    super.key,
     required this.value,
   });
 
