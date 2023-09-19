@@ -67,6 +67,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final _firstNameTextController = TextEditingController();
   final _lastNameTextController = TextEditingController();
   final _usernameTextController = TextEditingController();
+  final _emailTextController = TextEditingController();
 
   double _formProgress = 0;
 
@@ -76,6 +77,7 @@ class _SignUpFormState extends State<SignUpForm> {
       _firstNameTextController,
       _lastNameTextController,
       _usernameTextController,
+      _emailTextController,
     ];
 
     for (final controller in controllers) {
@@ -121,6 +123,12 @@ class _SignUpFormState extends State<SignUpForm> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your last name';
+                }
+                return null;
+              },
               controller: _lastNameTextController,
               decoration: const InputDecoration(hintText: 'Last name'),
             ),
@@ -128,20 +136,54 @@ class _SignUpFormState extends State<SignUpForm> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your Username';
+                }
+                return null;
+              },
               controller: _usernameTextController,
               decoration: const InputDecoration(hintText: 'Username'),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                return null;
+              },
+              controller: _emailTextController,
+              decoration: const InputDecoration(hintText: 'Email'),
+            ),
+          ),
           TextButton(
             style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                return states.contains(MaterialState.disabled) ? null : Colors.white;
+              foregroundColor: MaterialStateProperty.resolveWith(
+                  (Set<MaterialState> states) {
+                return states.contains(MaterialState.disabled)
+                    ? null
+                    : Colors.white;
               }),
-              backgroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                return states.contains(MaterialState.disabled) ? null : Colors.blue;
+              backgroundColor: MaterialStateProperty.resolveWith(
+                  (Set<MaterialState> states) {
+                return states.contains(MaterialState.disabled)
+                    ? null
+                    : Colors.blue;
               }),
             ),
-            onPressed: _formProgress == 1.0 ? _showWelcomeScreen : null,
+            onPressed: _formProgress == 1.0
+                ? () {
+                    if (_formKey.currentState!.validate()) {
+                      _showWelcomeScreen();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Processing Data')),
+                      );
+                    }
+                  }
+                : null,
             child: const Text('Sign up'),
           ),
         ],
@@ -173,7 +215,8 @@ class _AnimatedProgressIndicatorState extends State<AnimatedProgressIndicator>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: const Duration(milliseconds: 1200), vsync: this);
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 2500), vsync: this);
 
     final colorTween = TweenSequence([
       TweenSequenceItem(
