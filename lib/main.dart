@@ -42,7 +42,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('Welcome, thanks for signing up!',
+        child: Text('Welcome!',
             style: Theme.of(context).textTheme.displayMedium),
       ),
     );
@@ -93,6 +93,16 @@ class _SignUpFormState extends State<SignUpForm> {
 
   void _showWelcomeScreen() {
     Navigator.of(context).pushNamed('/welcome');
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _firstNameTextController.dispose();
+    _lastNameTextController.dispose();
+    _usernameTextController.dispose();
+    _emailTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -181,6 +191,16 @@ class _SignUpFormState extends State<SignUpForm> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Processing Data')),
                       );
+                      // Retrieving data from text fields and showing it on a dialog box.
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Welcome!'),
+                              content: Text(
+                                  "Your first name is ${_firstNameTextController.text} and your last name is ${_lastNameTextController.text}"),
+                            );
+                          });
                     }
                   }
                 : null,
